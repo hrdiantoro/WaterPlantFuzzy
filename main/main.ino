@@ -44,6 +44,13 @@ void setup() {
   delay(3000);
   lcd.clear();
 
+  lcd.setCursor(0, 0);
+  lcd.print(" IRIGASI CERDAS");
+  lcd.setCursor(0, 1);
+  lcd.print(" BERBASIS FUZZY");
+  delay(3000);
+  lcd.clear();
+
   // Input Rain Sensor
   FuzzyInput *rainSensor = new FuzzyInput(1);
   FuzzySet *noRain = new FuzzySet(0, 0, 20, 50);         // Tidak ada hujan
@@ -139,7 +146,7 @@ void loop() {
   lcd.print("Moisture: ");
   lcd.print(soilMoistureValue);
   lcd.setCursor(0, 1);
-  lcd.print("Rain: ");
+  lcd.print("Rain    : ");
   lcd.print(rainSensorValue);
 
   // Serial print sensor dan status pompa
@@ -178,5 +185,5 @@ void loop() {
     Serial.println("High");
   }
 
-  delay(1000);
+  delay(500);
 }
