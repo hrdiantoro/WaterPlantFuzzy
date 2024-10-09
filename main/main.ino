@@ -53,7 +53,7 @@ void setup() {
 
   // Input Rain Sensor
   FuzzyInput *rainSensor = new FuzzyInput(1);
-  FuzzySet *noRain = new FuzzySet(0, 0, 20, 50);         // Tidak ada hujan
+  FuzzySet *noRain = new FuzzySet(0, 10, 20, 30);         // Tidak ada hujan
   FuzzySet *lightRain = new FuzzySet(30, 50, 60, 70);    // Gerimis
   FuzzySet *heavyRain = new FuzzySet(60, 80, 100, 100);  // Hujan lebat
   rainSensor->addFuzzySet(noRain);
@@ -63,7 +63,7 @@ void setup() {
 
   // Input Soil Moisture Sensor
   FuzzyInput *soilMoisture = new FuzzyInput(2);
-  FuzzySet *dry = new FuzzySet(0, 0, 10, 25);      // Kering
+  FuzzySet *dry = new FuzzySet(0, 10, 15, 25);      // Kering
   FuzzySet *moist = new FuzzySet(20, 30, 40, 60);  // Lembab
   FuzzySet *wet = new FuzzySet(70, 80, 100, 100);  // Basah
   soilMoisture->addFuzzySet(dry);
@@ -117,8 +117,8 @@ void setup() {
 }
 
 void loop() {
-  rainSensorValue = (1023 - analogRead(rainSensorPin)) / 10.24;      // Dibuat agar menjadi prosentase
-  soilMoistureValue = (1023 - analogRead(soilMoisturePin)) / 10.24;  // Dibuat agar menjadi prosentase
+  rainSensorValue = analogRead(rainSensorPin)) / 10.24;      // Dibuat agar menjadi prosentase
+  soilMoistureValue = analogRead(soilMoisturePin)) / 10.24;  // Dibuat agar menjadi prosentase
 
   // Validasi pembacaan sensor
   if (rainSensorValue < 0 || rainSensorValue > 100) {
