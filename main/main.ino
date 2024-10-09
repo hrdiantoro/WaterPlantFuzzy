@@ -128,8 +128,10 @@ void loop() {
 
   pumpSpeed = fuzzy->defuzzify(1);
 
+  int pwmValue = map(pumpSpeed, 0, 100, 0, 255);
+
   // Kontrol pompa berdasarkan kecepatan
-  controlPump(pumpSpeed);
+  controlPump(pwmValue);
 
   // Menampilkan nilai pada LCD
   lcd.clear();
