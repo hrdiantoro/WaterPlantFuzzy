@@ -13,6 +13,9 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 #define IN_1 2
 #define IN_2 3
 
+unsigned long prevMillis = 0;
+const long interval = 1000;
+
 float rainSensorValue;
 float soilMoistureValue;
 

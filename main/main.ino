@@ -25,7 +25,7 @@ void setup() {
 
   // Input Rain Sensor
   FuzzyInput *rainSensor = new FuzzyInput(1);
-  FuzzySet *noRain = new FuzzySet(0, 10, 20, 30);         // Tidak ada hujan
+  FuzzySet *noRain = new FuzzySet(0, 10, 20, 30);        // Tidak ada hujan
   FuzzySet *lightRain = new FuzzySet(30, 50, 60, 70);    // Gerimis
   FuzzySet *heavyRain = new FuzzySet(60, 80, 100, 100);  // Hujan lebat
   rainSensor->addFuzzySet(noRain);
@@ -35,7 +35,7 @@ void setup() {
 
   // Input Soil Moisture Sensor
   FuzzyInput *soilMoisture = new FuzzyInput(2);
-  FuzzySet *dry = new FuzzySet(0, 10, 15, 25);      // Kering
+  FuzzySet *dry = new FuzzySet(0, 10, 15, 25);     // Kering
   FuzzySet *moist = new FuzzySet(20, 30, 40, 60);  // Lembab
   FuzzySet *wet = new FuzzySet(70, 80, 100, 100);  // Basah
   soilMoisture->addFuzzySet(dry);
@@ -94,68 +94,72 @@ void loop() {
 
   // Validasi pembacaan sensor
   if (rainSensorValue < 0 || rainSensorValue > 100) {
-    rainSensorValue = 0; // Set default jika ada kesalahan pembacaan
+    rainSensorValue = 0;  // Set default jika ada kesalahan pembacaan
   }
   if (soilMoistureValue < 0 || soilMoistureValue > 100) {
-    soilMoistureValue = 0; // Set default jika ada kesalahan pembacaan
+    soilMoistureValue = 0;  // Set default jika ada kesalahan pembacaan
   }
 
-  fuzzy->setInput(1, rainSensorValue);
-  fuzzy->setInput(2, soilMoistureValue);
+  unsigned long currentTime = millis();
+  if ((currentTime - prevMillis) >= interval) {
 
-  fuzzy->fuzzify();
+    fuzzy->setInput(1, rainSensorValue);
+    fuzzy->setInput(2, soilMoistureValue);
 
-  pumpSpeed = fuzzy->defuzzify(1);
+    fuzzy->fuzzify();
 
-  int pwmValue = map(pumpSpeed, 0, 100, 0, 255);
+    pumpSpeed = fuzzy->defuzzify(1);
 
-  // Kontrol pompa berdasarkan kecepatan
-  controlPump(pwmValue);
+    int pwmValue = map(pumpSpeed, 0, 100, 0, 255);
 
-  // Menampilkan nilai pada LCD
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Moisture: ");
-  lcd.print(soilMoistureValue);
-  lcd.setCursor(0, 1);
-  lcd.print("Rain    : ");
-  lcd.print(rainSensorValue);
+    // Kontrol pompa berdasarkan kecepatan
+    controlPump(pwmValue);
 
-  // Serial print sensor dan status pompa
-  Serial.print("Rain Sensor: ");
-  Serial.print(rainSensorValue);
-  Serial.print("% - Status: ");
-  if (rainSensorValue <= 50) {
-    Serial.print("No Rain");
-  } else if (rainSensorValue > 50 && rainSensorValue <= 70) {
-    Serial.print("Light Rain");
-  } else {
-    Serial.print("Heavy Rain");
+    // Menampilkan nilai pada LCD
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Moisture: ");
+    lcd.print(soilMoistureValue);
+    lcd.setCursor(0, 1);
+    lcd.print("Rain    : ");
+    lcd.print(rainSensorValue);
+
+    // Serial print sensor dan status pompa
+    Serial.print("Rain Sensor: ");
+    Serial.print(rainSensorValue);
+    Serial.print("% - Status: ");
+    if (rainSensorValue <= 50) {
+      Serial.print("No Rain");
+    } else if (rainSensorValue > 50 && rainSensorValue <= 70) {
+      Serial.print("Light Rain");
+    } else {
+      Serial.print("Heavy Rain");
+    }
+
+    Serial.print(" | Soil Moisture: ");
+    Serial.print(soilMoistureValue);
+    Serial.print("% - Status: ");
+    if (soilMoistureValue <= 25) {
+      Serial.print("Dry");
+    } else if (soilMoistureValue > 25 && soilMoistureValue <= 60) {
+      Serial.print("Moist");
+    } else {
+      Serial.print("Wet");
+    }
+
+    Serial.print(" | Pump Speed: ");
+    Serial.print(pumpSpeed);
+    Serial.print(" - Status: ");
+    if (pumpSpeed == 0) {
+      Serial.println("Off");
+    } else if (pumpSpeed > 0 && pumpSpeed <= 60) {
+      Serial.println("Low");
+    } else if (pumpSpeed > 60 && pumpSpeed <= 90) {
+      Serial.println("Medium");
+    } else {
+      Serial.println("High");
+    }
+
+    delay(500);
   }
-
-  Serial.print(" | Soil Moisture: ");
-  Serial.print(soilMoistureValue);
-  Serial.print("% - Status: ");
-  if (soilMoistureValue <= 25) {
-    Serial.print("Dry");
-  } else if (soilMoistureValue > 25 && soilMoistureValue <= 60) {
-    Serial.print("Moist");
-  } else {
-    Serial.print("Wet");
-  }
-
-  Serial.print(" | Pump Speed: ");
-  Serial.print(pumpSpeed);
-  Serial.print(" - Status: ");
-  if (pumpSpeed == 0) {
-    Serial.println("Off");
-  } else if (pumpSpeed > 0 && pumpSpeed <= 60) {
-    Serial.println("Low");
-  } else if (pumpSpeed > 60 && pumpSpeed <= 90) {
-    Serial.println("Medium");
-  } else {
-    Serial.println("High");
-  }
-
-  delay(500);
 }
